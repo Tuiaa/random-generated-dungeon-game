@@ -6,7 +6,7 @@ public class Room {
 
     private int _id { get; set; }
     public int width { get; set; }
-    public int height { get; set; }
+    public int depth { get; set; }
     public int roomHeight { get; set; }
     public Vector2 position { get; set; }
     private bool _isStartRoom;

@@ -5,25 +5,32 @@ using UnityEngine;
 /// <summary>
 /// Generates a room according to Room object
 /// </summary>
-public class RoomGenerator {
+public class RoomGenerator
+{
 
     [SerializeField]
     private float _offsetPivotPoint = 0.5f;
+    [SerializeField]
+    private int _borderThickness = 2;
 
     private Room _roomToGenerate;
-    GameObject roomParent;
+    private GameObject _roomParent;
 
     public void CreateRoom(Room room)
     {
         _roomToGenerate = room;
 
-        if(_roomToGenerate != null)
+        if (_roomToGenerate != null)
         {
-            roomParent = new GameObject();
-            roomParent.name = "RoomParent";
+            _roomParent = new GameObject();
+            _roomParent.name = "RoomParent";
 
             CreateFloor();
+            // TODO: Fix so it works on other values too
             CreateWalls();
+
+            // TODO: Fix so it works on other values too
+            //CreateBorders();
         }
     }
 
@@ -34,13 +41,13 @@ public class RoomGenerator {
     {
         for (int i = 0; i < _roomToGenerate.width; i++)
         {
-            for (int j = 0; j < _roomToGenerate.height; j++)
+            for (int j = 0; j < _roomToGenerate.depth; j++)
             {
                 GameObject _floorQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 _floorQuad.name = "FloorQuad" + i + j;
                 _floorQuad.transform.position = new Vector3(_roomToGenerate.position.x + i + _offsetPivotPoint, 0, _roomToGenerate.position.y + j + _offsetPivotPoint);
                 _floorQuad.transform.Rotate(90, 0, 0, Space.World);
-                _floorQuad.transform.parent = roomParent.transform;
+                _floorQuad.transform.parent = _roomParent.transform;
             }
         }
     }
@@ -51,58 +58,88 @@ public class RoomGenerator {
     private void CreateWalls()
     {
         // Bottom wall
-        for (int i = 0; i < _roomToGenerate.width; i++)
-        {
-            for (int j = 0; j < _roomToGenerate.roomHeight; j++)
-            {
-                GameObject _wallQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                _wallQuad.name = "WallQuadBottom" + i + j;
-                _wallQuad.transform.position = new Vector3(_roomToGenerate.position.x + i + _offsetPivotPoint, 
-                                                           _roomToGenerate.position.y + j + _offsetPivotPoint, 0);
-                _wallQuad.transform.Rotate(0, 180, 0, Space.World);
-            }
-        }
+        GameObject _wallQuadBottom = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _wallQuadBottom.name = "WallQuadBottom";
+        _wallQuadBottom.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width / 2,
+                                                         _roomToGenerate.position.y + _roomToGenerate.roomHeight / 2, 0);
+        _wallQuadBottom.transform.localScale = new Vector3(_roomToGenerate.width, _roomToGenerate.roomHeight, 1);
+        _wallQuadBottom.transform.Rotate(180, 0, 0, Space.World);
+        _wallQuadBottom.transform.parent = _roomParent.transform;
+
+        // Upper wall
+        GameObject _wallQuadUp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _wallQuadUp.name = "WallQuadUp";
+        _wallQuadUp.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width / 2,
+                                                     _roomToGenerate.position.y + _roomToGenerate.roomHeight / 2,
+                                                     _roomToGenerate.depth);
+        _wallQuadUp.transform.localScale = new Vector3(_roomToGenerate.width, _roomToGenerate.roomHeight, 1);
+        _wallQuadUp.transform.Rotate(0, 0, 0, Space.World);
+        _wallQuadUp.transform.parent = _roomParent.transform;
 
         // Right wall
-        for (int i = 0; i < _roomToGenerate.height; i++)
-        {
-            for (int j = 0; j < _roomToGenerate.roomHeight; j++)
-            {
-                GameObject _wallQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                _wallQuad.name = "WallQuadRight" + i + j;
-                _wallQuad.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width, 
-                                                           _roomToGenerate.position.y + j + _offsetPivotPoint, 
-                                                           i + _offsetPivotPoint);
-                _wallQuad.transform.Rotate(0, 90, 0, Space.World);
-            }
-        }
+        GameObject _wallQuadRight = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _wallQuadRight.name = "WallQuadRight";
+        _wallQuadRight.transform.position = new Vector3(_roomToGenerate.width,
+                                                        _roomToGenerate.roomHeight / 2,
+                                                        _roomToGenerate.depth / 2 + _offsetPivotPoint);
+        _wallQuadRight.transform.localScale = new Vector3(_roomToGenerate.depth, _roomToGenerate.roomHeight, 1);
+        _wallQuadRight.transform.Rotate(0, 90, 0, Space.World);
+        _wallQuadRight.transform.parent = _roomParent.transform;
 
-        // Upper wall
-        for (int i = 0; i < _roomToGenerate.width; i++)
-        {
-            for (int j = 0; j < _roomToGenerate.roomHeight; j++)
-            {
-                GameObject _wallQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                _wallQuad.name = "WallQuadUpper" + i + j;
-                _wallQuad.transform.position = new Vector3(_roomToGenerate.position.x + i + _offsetPivotPoint,
-                                                           _roomToGenerate.position.y + j + _offsetPivotPoint,
-                                                           _roomToGenerate.height);
-                _wallQuad.transform.Rotate(0, 0, 0, Space.World);
-            }
-        }
+        // Left wall
+        GameObject _wallQuadLeft = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _wallQuadLeft.name = "WallQuadLeft";
+        _wallQuadLeft.transform.position = new Vector3(_roomToGenerate.position.x,
+                                                       _roomToGenerate.roomHeight / 2,
+                                                       _roomToGenerate.depth / 2 + _offsetPivotPoint);
+        _wallQuadLeft.transform.localScale = new Vector3(_roomToGenerate.depth, _roomToGenerate.roomHeight, 1);
+        _wallQuadLeft.transform.Rotate(0, -90, 0, Space.World);
+        _wallQuadLeft.transform.parent = _roomParent.transform;
+    }
 
-        // Upper wall
-        for (int i = 0; i < _roomToGenerate.height; i++)
-        {
-            for (int j = 0; j < _roomToGenerate.roomHeight; j++)
-            {
-                GameObject _wallQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                _wallQuad.name = "WallQuadLeft" + i + j;
-                _wallQuad.transform.position = new Vector3(_roomToGenerate.position.x,
-                                                           _roomToGenerate.position.y + j + _offsetPivotPoint,
-                                                           i + _offsetPivotPoint);
-                _wallQuad.transform.Rotate(0, -90, 0, Space.World);
-            }
-        }
+    /// <summary>
+    /// Creates borders between rooms
+    /// </summary>
+    private void CreateBorders()
+    {
+        // Bottom wall border
+        GameObject _borderQuadBottom = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _borderQuadBottom.name = "BorderQuadBottom";
+        _borderQuadBottom.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width / 2,
+                                                           _roomToGenerate.position.y + _roomToGenerate.roomHeight,
+                                                           -_borderThickness / 2);
+        _borderQuadBottom.transform.localScale = new Vector3(_roomToGenerate.width, _borderThickness, 1);
+        _borderQuadBottom.transform.Rotate(90, 0, 0, Space.World);
+        _borderQuadBottom.transform.parent = _roomParent.transform;
+
+        // Upper wall border
+        GameObject _borderQuadUp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _borderQuadUp.name = "BorderQuadUp";
+        _borderQuadUp.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width / 2,
+                                                       _roomToGenerate.position.y + _roomToGenerate.roomHeight,
+                                                       _roomToGenerate.depth + _borderThickness / 2);
+        _borderQuadUp.transform.localScale = new Vector3(_roomToGenerate.width, _borderThickness, 1);
+        _borderQuadUp.transform.Rotate(90, 0, 0, Space.World);
+        _borderQuadUp.transform.parent = _roomParent.transform;
+
+        // Right wall border
+        GameObject _borderQuadRight = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _borderQuadRight.name = "BorderQuadRight";
+        _borderQuadRight.transform.position = new Vector3(_roomToGenerate.width +_borderThickness / 2,
+                                                       _roomToGenerate.position.y + _roomToGenerate.roomHeight,
+                                                       _roomToGenerate.depth / 2 + _offsetPivotPoint);
+        _borderQuadRight.transform.localScale = new Vector3(_roomToGenerate.depth + _borderThickness * 2, _borderThickness, 1);
+        _borderQuadRight.transform.Rotate(90, 90, 0, Space.World);
+        _borderQuadRight.transform.parent = _roomParent.transform;
+
+        // Left wall border
+        GameObject _borderQuadLeft = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _borderQuadLeft.name = "BorderQuadLeft";
+        _borderQuadLeft.transform.position = new Vector3(_roomToGenerate.position.x - _borderThickness / 2,
+                                                       _roomToGenerate.position.y + _roomToGenerate.roomHeight,
+                                                       _roomToGenerate.depth / 2 + _offsetPivotPoint);
+        _borderQuadLeft.transform.localScale = new Vector3(_roomToGenerate.depth + _borderThickness * 2, _borderThickness, 1);
+        _borderQuadLeft.transform.Rotate(90, 90, 0, Space.World);
+        _borderQuadLeft.transform.parent = _roomParent.transform;
     }
 }
