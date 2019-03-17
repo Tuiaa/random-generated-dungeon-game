@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Room object
+/// - width, height and depth are defined as int because dungeon is grid based
+/// </summary>
 public class Room {
 
     private int _id { get; set; }

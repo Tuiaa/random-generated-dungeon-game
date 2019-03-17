@@ -26,7 +26,6 @@ public class RoomGenerator
             _roomParent.name = "RoomParent";
 
             CreateFloor();
-            // TODO: Fix so it works on other values too
             CreateWalls();
 
             // TODO: Fix so it works on other values too
@@ -39,12 +38,12 @@ public class RoomGenerator
     /// </summary>
     private void CreateFloor()
     {
-        for (int i = 0; i < _roomToGenerate.width; i++)
+        for (int j = 0; j < _roomToGenerate.depth; j++)
         {
-            for (int j = 0; j < _roomToGenerate.depth; j++)
+            for (int i = 0; i < _roomToGenerate.width; i++)
             {
                 GameObject _floorQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                _floorQuad.name = "FloorQuad" + i + j;
+                _floorQuad.name = "FloorQuad" + j + i;
                 _floorQuad.transform.position = new Vector3(_roomToGenerate.position.x + i + _offsetPivotPoint, 0, _roomToGenerate.position.y + j + _offsetPivotPoint);
                 _floorQuad.transform.Rotate(90, 0, 0, Space.World);
                 _floorQuad.transform.parent = _roomParent.transform;
@@ -60,41 +59,58 @@ public class RoomGenerator
         // Bottom wall
         GameObject _wallQuadBottom = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _wallQuadBottom.name = "WallQuadBottom";
-        _wallQuadBottom.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width / 2,
-                                                         _roomToGenerate.position.y + _roomToGenerate.roomHeight / 2, 0);
+
+        // Casting from int to float so we get correct values from calculations
+        float posX = _roomToGenerate.position.x + (float)_roomToGenerate.width / 2;
+        float posY = (float)_roomToGenerate.roomHeight / 2;
+        float posZ = _roomToGenerate.position.y;
+
+        _wallQuadBottom.transform.position = new Vector3(posX, posY, posZ);
         _wallQuadBottom.transform.localScale = new Vector3(_roomToGenerate.width, _roomToGenerate.roomHeight, 1);
-        _wallQuadBottom.transform.Rotate(180, 0, 0, Space.World);
+        _wallQuadBottom.transform.Rotate(0, 180, 0, Space.World);
         _wallQuadBottom.transform.parent = _roomParent.transform;
 
         // Upper wall
-        GameObject _wallQuadUp = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        _wallQuadUp.name = "WallQuadUp";
-        _wallQuadUp.transform.position = new Vector3(_roomToGenerate.position.x + _roomToGenerate.width / 2,
-                                                     _roomToGenerate.position.y + _roomToGenerate.roomHeight / 2,
-                                                     _roomToGenerate.depth);
+         GameObject _wallQuadUp = GameObject.CreatePrimitive(PrimitiveType.Quad);
+         _wallQuadUp.name = "WallQuadUp";
+
+        // Casting from int to float so we get correct values from calculations
+        float posXUp = _roomToGenerate.position.x + (float)_roomToGenerate.width / 2;
+        float posYUp = (float)_roomToGenerate.roomHeight / 2;
+        float posZUp = _roomToGenerate.position.y + _roomToGenerate.depth;
+        
+        _wallQuadUp.transform.position = new Vector3(posXUp, posYUp, posZUp);
         _wallQuadUp.transform.localScale = new Vector3(_roomToGenerate.width, _roomToGenerate.roomHeight, 1);
         _wallQuadUp.transform.Rotate(0, 0, 0, Space.World);
         _wallQuadUp.transform.parent = _roomParent.transform;
 
-        // Right wall
-        GameObject _wallQuadRight = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        _wallQuadRight.name = "WallQuadRight";
-        _wallQuadRight.transform.position = new Vector3(_roomToGenerate.width,
-                                                        _roomToGenerate.roomHeight / 2,
-                                                        _roomToGenerate.depth / 2 + _offsetPivotPoint);
-        _wallQuadRight.transform.localScale = new Vector3(_roomToGenerate.depth, _roomToGenerate.roomHeight, 1);
-        _wallQuadRight.transform.Rotate(0, 90, 0, Space.World);
-        _wallQuadRight.transform.parent = _roomParent.transform;
-
         // Left wall
         GameObject _wallQuadLeft = GameObject.CreatePrimitive(PrimitiveType.Quad);
         _wallQuadLeft.name = "WallQuadLeft";
-        _wallQuadLeft.transform.position = new Vector3(_roomToGenerate.position.x,
-                                                       _roomToGenerate.roomHeight / 2,
-                                                       _roomToGenerate.depth / 2 + _offsetPivotPoint);
+
+        // Casting from int to float so we get correct values from calculations
+        float posXLeft = _roomToGenerate.position.x;
+        float posYLeft = (float)_roomToGenerate.roomHeight / 2;
+        float posZLeft = _roomToGenerate.position.y + (float)_roomToGenerate.depth / 2;
+
+        _wallQuadLeft.transform.position = new Vector3(posXLeft, posYLeft, posZLeft);
         _wallQuadLeft.transform.localScale = new Vector3(_roomToGenerate.depth, _roomToGenerate.roomHeight, 1);
         _wallQuadLeft.transform.Rotate(0, -90, 0, Space.World);
         _wallQuadLeft.transform.parent = _roomParent.transform;
+
+        // Right wall
+        GameObject _wallQuadRight = GameObject.CreatePrimitive(PrimitiveType.Quad);
+        _wallQuadRight.name = "WallQuadRight";
+
+        // Casting from int to float so we get correct values from calculations
+        float posXRight = _roomToGenerate.position.x + _roomToGenerate.width;
+        float posYRight = (float)_roomToGenerate.roomHeight / 2;
+        float posZRight = _roomToGenerate.position.y + (float)_roomToGenerate.depth / 2;
+
+        _wallQuadRight.transform.position = new Vector3(posXRight, posYRight, posZRight);
+        _wallQuadRight.transform.localScale = new Vector3(_roomToGenerate.depth, _roomToGenerate.roomHeight, 1);
+        _wallQuadRight.transform.Rotate(0, 90, 0, Space.World);
+        _wallQuadRight.transform.parent = _roomParent.transform;
     }
 
     /// <summary>
